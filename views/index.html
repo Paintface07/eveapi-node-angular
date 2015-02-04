@@ -1,0 +1,19 @@
+<!doctype HTML>
+<html ng-app="testApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+    <script src="javascripts/xml2json.js"></script>
+    <script src="javascripts/testApp.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css"
+  </head>
+  <body>
+    <div ng-controller="MainController" id="content">
+      <div id="keyIdLabel">Key ID:</div>
+      <input ng-model="keyId" />
+      <div id="vCodeLabel">vCode:&nbsp</div>
+      <input ng-model="vCode" />
+      <button type="button" ng-click="query()" >Submit</button>
+      <div id="result">{{ output }}</div>
+    </div>
+  </body>
+</html>
