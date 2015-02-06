@@ -1,39 +1,77 @@
 angular.module('testApp', [])
   .controller('MainController', function($scope, $http) {
-    $scope.output = '';
+    $scope.characterName = '';
     $scope.selectedCharacter = '';
-    $scope.marketOrders = '';
+    $scope.walletJournalEntries = '';
+    //$scope.marketOrders = '';
+    //$scope.marketCharacterId = '';
 
-//apiKey, characterID, userID, orderID(*opt*)
-    $scope.query = function() {
+    /*
+     * Controller-attached function to query the character list based
+     * on the authentication information supplied.
+     */
+    $scope.queryCharacters = function() {
       __makeApiCall('characters', {
         keyId: $scope.keyId,
         vCode: $scope.vCode
-      }, function(dataA) {
-        var characters = dataA.eveapi.result.rowset.row_asArray;
-        $scope.output = characters[0]._name;
+      }, function(data) {
+        var characters = data.eveapi.result.rowset.row_asArray;
+        $scope.characterName = characters[0]._name;
         $scope.selectedCharacter = characters[0];
 
-        // need to find more detail on apiKey/userID
-        __makeApiCall('orders', {
+        // get wallet journal
+        var DEFAULT_WALLET = '1000';
+
+        __makeApiCall('walletJournal', {
           keyId:       $scope.keyId,
-          vCode:       $scope.vCode,
-          apiKey:      "",
           characterID: $scope.selectedCharacter._characterID,
-          userID:      ""
-        }, function(dataB) {
-          $scope.marketOrders = dataB.eveapi.result.rowset.row_asArray;
+          vCode:       $scope.vCode
+        }, function(data) {
+          $scope.walletJournalEntries = data.eveapi.result.rowset.row_asArray;
         });
       });
     };
 
+
+    /*
+     * Controller-attached function to query the selected character's
+     * wallet.
+     */
+/*     $scope.queryWalletJournal = function() {
+       var DEFAULT_WALLET = '1000';
+
+       __makeApiCall('walletJournal', {
+         keyId:       $scope.keyId,
+         characterID: $scope.selectedCharacter._characterID;
+         vCode:       $scope.vCode,
+         accountKey:  DEFAULT_WALLET
+       }, function(data) {
+         $scope.walletJournalEntries = data.eveapi.result.rowset.row_asArray;
+       });
+     };
+*/
+    /*
+     * Controller-attached function to query market orders based on the
+     * entered character id.
+     */
+/*    $scope.queryMarketOrders = function() {
+      __makeApiCall('orders', {
+        keyId:       $scope.keyId,
+        characterID: $scope.marketCharacterId,
+        vCode:       $scope.vCode
+      }, function(dataB) {
+        $scope.marketOrders = dataB.eveapi.result.rowset.row_asArray;
+      });
+    };
+*/
     /*
      * Function to execute api calls against the proper endpoint
      * based on the data being requested.
      */
     function __makeApiCall(dataType, params, callback) {
       var ApiMap = new Map([['characters', 'account/Characters']
-                          , ['orders', 'char/MarketOrders']]);
+                          , ['orders', 'char/MarketOrders']
+                          , ['walletJournal', 'char/WalletJournal']]);
 
       if(ApiMap.get(dataType)) {
         // setup basis of Eve API URL
@@ -57,9 +95,10 @@ angular.module('testApp', [])
           }
         }
 
+        console.log("*** Querying: " + apiString);
+
         // issue Eve API request against proper endpoint with all parameters
-        $http.get(apiString)
-        .success(function(data, status, headers, config) {
+        $http.get(apiString).success(function(data, status, headers, config) {
           var x2js = new X2JS();
           var parsedResponse = x2js.xml_str2json(data);
 
@@ -71,7 +110,7 @@ angular.module('testApp', [])
           }
 
         }).error(function(data, status, headers, config) {
-          $scope.output = "ERROR: Could not reach Eve API: " + status;
+          $scope.characterName = "ERROR: Could not reach Eve API: " + status;
         });
       } else {
         throw "ERROR: The data type requested of the Eve API is not mapped.";
