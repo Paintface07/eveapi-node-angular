@@ -29,42 +29,28 @@
         </div>
         <div class="container-fluid">
           <div class="row">
-            <div class="col-sm-4">
-              <h5>Wallet</h5>
-              <table class="table-striped" ng-hide="walletJournalEntries === ''">
-                <tr>
-                  <th>Buyer</th>
-                  <th>Seller</th>
-                  <th>Amount</th>
-                </tr>
-                <tr ng-repeat="entry in walletJournalEntries">
-                  <td>{{ entry._ownerName1}}</td>
-                  <td>{{ entry._ownerName2 }}</td>
-                  <td>{{ entry._amount }}</td>
-                <tr>
-              </table>
-            </div>
-            <div class="col-sm-4">
-              <h3>Beef</h3>
-              <p>
-                Bacon ipsum dolor amet shank kielbasa ball tip swine shankle tail
-                beef ribs jerky chicken. Ground round picanha short loin jowl.
-                Pork belly shoulder beef pork, landjaeger ball tip short loin.
-                Beef ribs ball tip drumstick tri-tip shoulder. Chuck short ribs
-                kielbasa spare ribs pastrami pig salami drumstick venison andouille.
-                Chuck brisket strip steak ham hock tenderloin salami capicola chicken.
-              </p>
-            </div>
-            <div class="col-sm-4">
-              <h3>Chicken</h3>
-              <p>
-                Bacon ipsum dolor amet shank kielbasa ball tip swine shankle tail
-                beef ribs jerky chicken. Ground round picanha short loin jowl.
-                Pork belly shoulder beef pork, landjaeger ball tip short loin.
-                Beef ribs ball tip drumstick tri-tip shoulder. Chuck short ribs
-                kielbasa spare ribs pastrami pig salami drumstick venison andouille.
-                Chuck brisket strip steak ham hock tenderloin salami capicola chicken.
-              </p>
+            <div id="characterSheet">
+              <b><h4>Character Sheet</h4></b>
+              <div id="characterRace">
+                <b>Race:</b>
+                {{ characterSheet.bloodLine }} - {{ characterSheet.ancestry }}
+              </div>
+              <div id="characterGender">
+                <b>Gender:</b>
+                {{ characterSheet.gender }}
+              </div>
+              <div id="characterAlliance">
+                <b>Alliance/Corporation:</b>
+                {{ characterSheet.allianceName }} - {{ characterSheet.corporationName }}
+              </div>
+              <div id="characterBalance">
+                <b>Wallet Balance:</b>
+                {{ characterSheet.balance }} ISK
+              </div>
+              <div id="characterCloneStatus">
+                <b>Clone Status:</b>
+                {{ characterSheet.cloneName === 'Clone Grade Alpha' ? 'You need to upgrade your clone' : 'Your clone is up to date'}}
+              </div>
             </div>
           </div>
         </div>

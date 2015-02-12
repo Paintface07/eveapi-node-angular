@@ -3,6 +3,7 @@ angular.module('testApp', [])
     $scope.characterName = '';
     $scope.selectedCharacter = '';
     $scope.walletJournalEntries = '';
+    $scope.LOGGING_ENABLED = true;
     //$scope.marketOrders = '';
     //$scope.marketCharacterId = '';
 
@@ -18,17 +19,8 @@ angular.module('testApp', [])
         var characters = data.eveapi.result.rowset.row_asArray;
         $scope.characterName = characters[0]._name;
         $scope.selectedCharacter = characters[0];
-
-        // get wallet journal
-        var DEFAULT_WALLET = '1000';
-
-        __makeApiCall('walletJournal', {
-          keyId:       $scope.keyId,
-          characterID: $scope.selectedCharacter._characterID,
-          vCode:       $scope.vCode
-        }, function(data) {
-          $scope.walletJournalEntries = data.eveapi.result.rowset.row_asArray;
-        });
+        //$scope.queryWalletJournal();
+        $scope.queryCharacterSheet();
       });
     };
 
@@ -37,33 +29,30 @@ angular.module('testApp', [])
      * Controller-attached function to query the selected character's
      * wallet.
      */
-/*     $scope.queryWalletJournal = function() {
-       var DEFAULT_WALLET = '1000';
-
+     $scope.queryWalletJournal = function() {
        __makeApiCall('walletJournal', {
          keyId:       $scope.keyId,
-         characterID: $scope.selectedCharacter._characterID;
-         vCode:       $scope.vCode,
-         accountKey:  DEFAULT_WALLET
+         characterID: $scope.selectedCharacter._characterID,
+         vCode:       $scope.vCode
        }, function(data) {
          $scope.walletJournalEntries = data.eveapi.result.rowset.row_asArray;
        });
      };
-*/
-    /*
-     * Controller-attached function to query market orders based on the
-     * entered character id.
-     */
-/*    $scope.queryMarketOrders = function() {
-      __makeApiCall('orders', {
+
+     /*
+      * Controller-attached function to query the selected character's
+      * character sheet.
+      */
+    $scope.queryCharacterSheet = function() {
+      __makeApiCall('characterSheet', {
         keyId:       $scope.keyId,
-        characterID: $scope.marketCharacterId,
+        characterId: $scope.selectedCharacter._characterID,
         vCode:       $scope.vCode
-      }, function(dataB) {
-        $scope.marketOrders = dataB.eveapi.result.rowset.row_asArray;
+      }, function(data) {
+        $scope.characterSheet = data.eveapi.result;
       });
     };
-*/
+
     /*
      * Function to execute api calls against the proper endpoint
      * based on the data being requested.
@@ -71,7 +60,8 @@ angular.module('testApp', [])
     function __makeApiCall(dataType, params, callback) {
       var ApiMap = new Map([['characters', 'account/Characters']
                           , ['orders', 'char/MarketOrders']
-                          , ['walletJournal', 'char/WalletJournal']]);
+                          , ['walletJournal', 'char/WalletJournal']
+                          , ['characterSheet', 'char/CharacterSheet']]);
 
       if(ApiMap.get(dataType)) {
         // setup basis of Eve API URL
@@ -104,6 +94,10 @@ angular.module('testApp', [])
 
           // perform callback if there is one
           if (typeof callback === "function") {
+            if($scope.LOGGING_ENABLED === true) {
+              console.log('Object Type - ' + ApiMap.get(dataType));
+              console.log(parsedResponse);
+            }
             callback(parsedResponse);
           } else {
             throw "ERROR: Callback supplied to __makeApiCall() is not a function!";
