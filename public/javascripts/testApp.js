@@ -1,5 +1,5 @@
 angular.module('testApp', [])
-  .controller('MainController', function($scope, $http) {
+  .controller('MainController', function($scope, $http, $filter) {
     $scope.characterName = '';
     $scope.selectedCharacter = '';
     $scope.walletJournalEntries = '';
@@ -50,6 +50,8 @@ angular.module('testApp', [])
         vCode:       $scope.vCode
       }, function(data) {
         $scope.characterSheet = data.eveapi.result;
+        var balance = $scope.characterSheet.balance;
+        $scope.characterSheet.balance = $filter('currency')(balance, "", 2);
       });
     };
 
