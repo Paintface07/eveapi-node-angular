@@ -53,6 +53,26 @@
               </div>
             </div>
           </div>
+          <div id="killLog">
+            <table class="table">
+              <tr>
+                <th>Time</th>
+                <th>Victim</th>
+                <th>Victim Alliance/Corporation</th>
+              </tr>
+              <tr ng-repeat="(index, kill) in killLog">
+                <td>
+                  {{ kill._killTime }}
+                </td>
+                <td>
+                  {{ kill.victim._characterName }}
+                </td>
+                <td>
+                  {{ kill.victim._allianceName }} - {{ kill.victim._corporationName }}
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
     </div>

@@ -4,8 +4,6 @@ angular.module('testApp', [])
     $scope.selectedCharacter = '';
     $scope.walletJournalEntries = '';
     $scope.LOGGING_ENABLED = true;
-    //$scope.marketOrders = '';
-    //$scope.marketCharacterId = '';
 
     /*
      * Controller-attached function to query the character list based
@@ -21,6 +19,7 @@ angular.module('testApp', [])
         $scope.selectedCharacter = characters[0];
         //$scope.queryWalletJournal();
         $scope.queryCharacterSheet();
+        $scope.queryKillLog();
       });
     };
 
@@ -56,6 +55,20 @@ angular.module('testApp', [])
     };
 
     /*
+     * Controller-attached function to query the selected character's
+     * character sheet.
+     */
+     $scope.queryKillLog = function() {
+       __makeApiCall('killLog', {
+         keyId:       $scope.keyId,
+         characterId: $scope.selectedCharacter._characterID,
+         vCode:       $scope.vCode
+       }, function(data) {
+         $scope.killLog = data.eveapi.result.rowset.row;
+       });
+     };
+
+    /*
      * Function to execute api calls against the proper endpoint
      * based on the data being requested.
      */
@@ -63,7 +76,8 @@ angular.module('testApp', [])
       var ApiMap = new Map([['characters', 'account/Characters']
                           , ['orders', 'char/MarketOrders']
                           , ['walletJournal', 'char/WalletJournal']
-                          , ['characterSheet', 'char/CharacterSheet']]);
+                          , ['characterSheet', 'char/CharacterSheet']
+                          , ['killLog', 'char/KillLog']]);
 
       if(ApiMap.get(dataType)) {
         // setup basis of Eve API URL
