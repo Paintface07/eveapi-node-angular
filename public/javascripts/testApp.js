@@ -1,14 +1,57 @@
 angular.module('testApp', [])
   .controller('MainController', function($scope, $http, $filter) {
     $scope.errors = [];
+    $scope.apiUrl = 'http://public-crest.eveonline.com/';
+    $scope.env = 'test';
 
-    $http.get('http://public-crest.eveonline.com/')
+    $http.get( $scope.apiUrl )
     .success( function( data, status, headers, config ) {
       $scope.api = data;
-      console.log( $scope.api );
     }).error( function ( data, status, headers, config ) {
       $scope.errors.push( status );
     });
+
+    $scope.queryItemGroups = function() {
+      $scope.errors = [];
+      __makeApiCall( $scope.api.itemGroups.href, function ( data ) {
+          $scope.itemGroups = data;
+      });
+    };
+
+    $scope.queryItemGroup = function( item ) {
+      $scope.errors = [];
+
+      __makeApiCall( item.href, function ( data ) {
+        for( i in $scope.itemGroups.items ) {
+          if( $scope.itemGroups.items[i].name === item.name ) {
+            $scope.itemGroups.items[i].returnVal = data;
+            //break;
+          }
+        }
+      });
+    };
+
+    function __makeApiCall( url, callback ) {
+      $scope.errors = [];
+
+      $http.get( url ).success( function( data, status, headers, config ) {
+        if(typeof callback === "function") {
+          if( $scope.env === 'test') {
+            console.log( data );
+          }
+
+          if($scope.api != null) {
+            callback(data);
+          } else {
+            $scope.errors.push("Could not reach EVE CREST API.");
+          }
+        } else {
+          throw "*** ERROR: __makeApiCall() was invoked without a proper callback.";
+        }
+      }).error( function( data, status, headers, config ) {
+        $scope.errors.push( data );
+      });
+    }
 
     // /*
     //  * Function to execute api calls against the proper endpoint

@@ -16,6 +16,9 @@
         <div ng-repeat="error in errors">
           {{ error }}
         </div>
+        <div ng-hide="api">
+          <h4>The EVE CREST API was unreachable.  :(</h4>
+        </div>
       </div>
       <div ng-show="api">
         <p>
@@ -36,7 +39,11 @@
         </p>
         <p>
           Item Groups:
-          <a onclick="" href="{{ api.itemGroups.href }}">{{ api.itemGroups.href }}</a>
+          <a ng-click="queryItemGroups()" href="">{{ api.itemGroups.href }}</a>
+          <div ng-show="itemGroups" ng-repeat="item in itemGroups.items">
+            <a ng-click="queryItemGroup(item)" href="">{{ item.name }}</a>
+            <div>{{ item.returnVal }}</div>
+          </div>
         </p>
         <p>
           Channels:
@@ -91,7 +98,7 @@
           <a onclick="" href="{{ api.map.href }}">{{ api.map.href }}</a>
         </p>
         <p>
-          Virtual Good Store:
+          Virtual Goods Store:
           <a onclick="" href="{{ api.virtualGoodStore.href }}">{{ api.virtualGoodStore.href }}</a>
         </p>
         <p>
