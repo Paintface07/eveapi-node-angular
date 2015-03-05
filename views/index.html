@@ -4,76 +4,149 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="javascripts/xml2json.js"></script>
     <script src="javascripts/testApp.js"></script>
-    <link rel="stylesheet" href="stylesheets/style.css"
+    <link rel="stylesheet" href="stylesheets/style.css"/>
   </head>
   <body>
     <div ng-controller="MainController" id="content">
-      <div ng-hide="characterName != ''">
-        <div id="keyIdLabel">Key ID:</div>
-        <input ng-model="keyId" />
-        <div id="vCodeLabel">vCode:&nbsp</div>
-        <input ng-model="vCode" />
-        <button type="button" ng-click="queryCharacters()" >Submit</button>
+      <div id="errorMessages" class="alert alert-danger" ng-hide="errors.length < 1">
+        <div ng-repeat="error in errors">
+          {{ error }}
+        </div>
       </div>
-      <div id="menu" ng-hide="characterName === ''">
-        <div class="jumbotron">
-          <div class="container">
-            <h1>Hello, {{ characterName }}!</h1>
-            <p>Please keep your hands and feet inside the spaceship at all times.</p>
+      <div ng-show="api">
+        <p>
+          API Server ( {{ api.serverName }} - {{ api.serverVersion }} ):
+          <a onclick="" href="{{ api.crestEndpoint.href }}">{{ api.crestEndpoint.href }}</a>
+        </p>
+        <p>
+          Eve Server Status:
+          <a onclick="" href="{{ api.serviceStatus.eve.href }}">{{ api.serviceStatus.eve }}</a>
+        </p>
+        <p>
+          Players Online:
+          <a onclick="" href="{{ api.userCounts.eve.href }}">{{ api.userCounts.eve }}</a>
+        </p>
+        <p>
+          Corporation Roles:
+          <a onclick="" href="{{ api.corporationRoles.href }}">{{ api.corporationRoles.href }}</a>
+        </p>
+        <p>
+          Item Groups:
+          <a onclick="" href="{{ api.itemGroups.href }}">{{ api.itemGroups.href }}</a>
+        </p>
+        <p>
+          Channels:
+          <a onclick="" href="{{ api.channels.href }}">{{ api.channels.href }}</a>
+        </p>
+        <p>
+          Corporations:
+          <a onclick="" href="{{ api.corporations.href }}">{{ api.corporations.href }}</a>
+        </p>
+        <p>
+          Alliances:
+          <a onclick="" href="{{ api.alliances.href }}">{{ api.alliances.href }}</a>
+        </p>
+        <p>
+          Item Types:
+          <a onclick="" href="{{ api.itemTypes.href }}">{{ api.itemTypes.href }}</a>
+        </p>
+        <p>
+          Decode:
+          <a onclick="" href="{{ api.decode.href }}">{{ api.decode.href }}</a>
+        </p>
+        <p>
+          Battle Theatres:
+          <a onclick="" href="{{ api.battleTheatres.href }}">{{ api.battleTheatres.href }}</a>
+        </p>
+        <p>
+          Market Prices:
+          <a onclick="" href="{{ api.marketPrices.href }}">{{ api.marketPrices.href }}</a>
+        </p>
+        <p>
+          Item Categories:
+          <a onclick="" href="{{ api.itemCategories.href }}">{{ api.itemCategories.href }}</a>
+        </p>
+        <p>
+          Regions:
+          <a onclick="" href="{{ api.regions.href }}">{{ api.regions.href }}</a>
+        </p>
+        <p>
+          Bloodlines:
+          <a onclick="" href="{{ api.bloodlines.href }}">{{ api.bloodlines.href }}</a>
+        </p>
+        <p>
+          Market Groups:
+          <a onclick="" href="{{ api.marketGroups.href }}">{{ api.marketGroups.href }}</a>
+        </p>
+        <p>
+          Tournaments:
+          <a onclick="" href="{{ api.tournaments.href }}">{{ api.tournaments.href }}</a>
+        </p>
+        <p>
+          Map:
+          <a onclick="" href="{{ api.map.href }}">{{ api.map.href }}</a>
+        </p>
+        <p>
+          Virtual Good Store:
+          <a onclick="" href="{{ api.virtualGoodStore.href }}">{{ api.virtualGoodStore.href }}</a>
+        </p>
+        <p>
+          Wars:
+          <a onclick="" href="{{ api.wars.href }}">{{ api.wars.href }}</a>
+        </p>
+        <p>
+          Incursions:
+          <a onclick="" href="{{ api.incursions.href }}">{{ api.incursions.href }}</a>
+        </p>
+        <p>
+          Races:
+          <a onclick="" href="{{ api.races.href }}">{{ api.races.href }}</a>
+        </p>
+        <p>
+          Auth Endpoint:
+          <a onclick="" href="{{ api.authEndpoint.href }}">{{ api.authEndpoint.href }}</a>
+        </p>
+        <div>
+          <p>Industry:</p>
+          <div style="margin-left: 20px;">
+            <p>
+              Facilities:
+              <a onclick="" href="{{ api.industry.facilities.href }}">{{ api.industry.facilities.href }}</a>
+            </p>
+            <p>
+              Specialities:
+              <a onclick="" href="{{ api.industry.specialities.href }}">{{ api.industry.specialities.href }}</a>
+            </p>
+            <p>
+              Teams In Auction:
+              <a onclick="" href="{{ api.industry.teamsInAuction.href }}">{{ api.industry.teamsInAuction.href }}</a>
+            </p>
+            <p>
+              Systems:
+              <a onclick="" href="{{ api.industry.systems.href }}">{{ api.industry.systems.href }}</a>
+            </p>
+            <p>
+              Teams:
+              <a onclick="" href="{{ api.industry.teams.href }}">{{ api.industry.teams.href }}</a>
+            </p>
           </div>
         </div>
-        <div class="container-fluid">
-          <div class="row">
-            <div id="characterSheet">
-              <b><h4>Character Sheet</h4></b>
-              <div id="characterRace">
-                <b>Race:</b>
-                {{ characterSheet.bloodLine }} - {{ characterSheet.ancestry }}
-              </div>
-              <div id="characterGender">
-                <b>Gender:</b>
-                {{ characterSheet.gender }}
-              </div>
-              <div id="characterAlliance">
-                <b>Alliance/Corporation:</b>
-                {{ characterSheet.allianceName }} - {{ characterSheet.corporationName }}
-              </div>
-              <div id="characterBalance">
-                <b>Wallet Balance:</b>
-                {{ characterSheet.balance }} ISK
-              </div>
-              <div id="characterCloneStatus">
-                <b>Clone Status:</b>
-                {{ characterSheet.cloneName === 'Clone Grade Alpha' ? 'You need to upgrade your clone' : 'Your clone is up to date'}}
-              </div>
-            </div>
-          </div>
-          <div id="killLog">
-            <table class="table">
-              <tr>
-                <th>Time</th>
-                <th>Victim</th>
-                <th>Victim Alliance/Corporation</th>
-              </tr>
-              <tr ng-repeat="(index, kill) in killLog">
-                <td>
-                  {{ kill._killTime }}
-                </td>
-                <td>
-                  {{ kill.victim._characterName }}
-                </td>
-                <td>
-                  {{ kill.victim._allianceName }} - {{ kill.victim._corporationName }}
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
+        <p>
+          Client:
+          <a onclick="" href="{{ api.clients.eve.href }}">{{ api.clients.eve.href }}</a>
+        </p>
+        <p>
+          Time:
+          <a onclick="" href="{{ api.time.href }}">{{ api.time.href }}</a>
+        </p>
+        <p>
+          Market Types:
+          <a onclick="" href="{{ api.marketTypes.href }}">{{ api.marketTypes.href }}</a>
+        </p>
       </div>
     </div>
   </body>
