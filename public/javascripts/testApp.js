@@ -104,7 +104,7 @@ angular.module('testApp', [])
       restrict: 'EA',
       link: function( scope, element, attrs ) {
         $(element).children('.collapsible-header').click( function() {
-          $(element).find('.collapsible-content').toggle();
+          $(element).children('.collapsible-content').toggle();
         });
       }
     };
