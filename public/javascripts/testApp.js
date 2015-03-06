@@ -4,6 +4,9 @@ angular.module('testApp', [])
     $scope.apiUrl = 'http://public-crest.eveonline.com/';
     $scope.env = 'test';
 
+    /*
+     * Controller public API Init method
+     */
     $http.get( $scope.apiUrl )
     .success( function( data, status, headers, config ) {
       $scope.api = data;
@@ -11,26 +14,60 @@ angular.module('testApp', [])
       $scope.errors.push( status );
     });
 
-    $scope.queryItemGroups = function() {
+    /* Function to fetch all item groups.  The data is attached
+     * to $scope.itemGroups.
+     * @return void - nothing
+     */
+    $scope.fetchItemGroups = function() {
       $scope.errors = [];
-      __makeApiCall( $scope.api.itemGroups.href, function ( data ) {
-          $scope.itemGroups = data;
-      });
+      if(!$scope.itemGroups) {
+        __makeApiCall( $scope.api.itemGroups.href, function ( data ) {
+            $scope.itemGroups = data;
+        });
+      }
     };
 
-    $scope.queryItemGroup = function( item ) {
+    /* Function to fetch all items for a provided group.  Data is
+     * attached to group.items.
+     * @param group - the group for which to fetch items
+     * @return void - nothing
+     */
+    $scope.fetchItemsForGroup = function( group ) {
       $scope.errors = [];
+      if(!group.items) {
+        __makeApiCall( group.href, function ( data ) {
+          group.items = data.types;
+        });
+      }
+    };
 
-      __makeApiCall( item.href, function ( data ) {
-        for( i in $scope.itemGroups.items ) {
-          if( $scope.itemGroups.items[i].name === item.name ) {
-            $scope.itemGroups.items[i].returnVal = data;
-            //break;
+    /* Function to perform an API call requesting types for the
+     * provided item.  The data is added to item.types as an
+     * iterable.
+     * @param item - the item for which to fetch types
+     * @return void - nothing
+     */
+    $scope.fetchTypesForItem = function( item ) {
+      $scope.errors = [];
+      if(!item.types) {
+        __makeApiCall( item.href, function ( data ) {
+          if(!data.length) {
+            var dataArray = [];
+            dataArray.push(data);
+            item.types = dataArray;
+          } else {
+            item.types = data;
           }
-        }
-      });
+        });
+      }
     };
 
+    /* Function to perform an API call against a given endpoint.  The
+     * data is then passed to the provided callback (if one is provided).
+     * @param url - the URL of the API endpoint to query
+     * @param callback - a function describing what to do with the data
+     * @return void - nothing
+     */
     function __makeApiCall( url, callback ) {
       $scope.errors = [];
 
@@ -41,7 +78,13 @@ angular.module('testApp', [])
           }
 
           if($scope.api != null) {
-            callback(data);
+            if(callback) {
+              callback(data);
+            } else {
+              if($scope.env === 'test') {
+                console.log('*** Making API call without callback to:' + url);
+              }
+            }
           } else {
             $scope.errors.push("Could not reach EVE CREST API.");
           }
@@ -53,62 +96,16 @@ angular.module('testApp', [])
       });
     }
 
-    // /*
-    //  * Function to execute api calls against the proper endpoint
-    //  * based on the data being requested.
-    //  */
-    // function __makeApiCall(dataType, params, callback) {
-    //   var ApiMap = new Map([['characters', 'account/Characters']
-    //                       , ['orders', 'char/MarketOrders']
-    //                       , ['walletJournal', 'char/WalletJournal']
-    //                       , ['characterSheet', 'char/CharacterSheet']
-    //                       , ['killLog', 'char/KillLog']]);
-    //
-    //   if(ApiMap.get(dataType)) {
-    //     // setup basis of Eve API URL
-    //     var apiString = "https://api.eveonline.com/" + ApiMap.get(dataType) + ".xml.aspx?";
-    //     var propertyCount = -1;
-    //
-    //     // count properties in parameters
-    //     for(prop in params) {
-    //       propertyCount++;
-    //     }
-    //
-    //     // append properties to URL
-    //     var temp = 0;
-    //     for (var property in params) {
-    //       if (params.hasOwnProperty(property)) {
-    //         apiString += property + '=' + params[property];
-    //         temp++;
-    //         if(temp <= propertyCount) {
-    //            apiString += '&';
-    //         }
-    //       }
-    //     }
-    //
-    //     console.log("*** Querying: " + apiString);
-    //
-    //     // issue Eve API request against proper endpoint with all parameters
-    //     $http.get(apiString).success(function(data, status, headers, config) {
-    //       var x2js = new X2JS();
-    //       var parsedResponse = x2js.xml_str2json(data);
-    //
-    //       // perform callback if there is one
-    //       if (typeof callback === "function") {
-    //         if($scope.LOGGING_ENABLED === true) {
-    //           console.log('Object Type - ' + ApiMap.get(dataType));
-    //           console.log(parsedResponse);
-    //         }
-    //         callback(parsedResponse);
-    //       } else {
-    //         throw "ERROR: Callback supplied to __makeApiCall() is not a function!";
-    //       }
-    //
-    //     }).error(function(data, status, headers, config) {
-    //       $scope.characterName = "ERROR: Could not reach Eve API: " + status;
-    //     });
-    //   } else {
-    //     throw "ERROR: The data type requested of the Eve API is not mapped.";
-    //   }
-    // }
+/* *** Directives ***
+ *
+ */
+  }).directive( 'collapsible', function() {
+    return {
+      restrict: 'EA',
+      link: function( scope, element, attrs ) {
+        $(element).children('.collapsible-header').click( function() {
+          $(element).find('.collapsible-content').toggle();
+        });
+      }
+    };
   });
