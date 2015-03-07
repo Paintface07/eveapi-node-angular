@@ -1,5 +1,5 @@
-angular.module('testApp', [])
-  .controller('MainController', function($scope, $http, $filter) {
+angular.module('testApp', ['crestService'])
+  .controller('MainController', function($scope, $http, $filter, CrestService) {
     $scope.errors = [];
     $scope.apiUrl = 'http://public-crest.eveonline.com/';
     $scope.env = 'test';
@@ -21,8 +21,8 @@ angular.module('testApp', [])
     $scope.fetchItemGroups = function() {
       $scope.errors = [];
       if(!$scope.itemGroups) {
-        __makeApiCall( $scope.api.itemGroups.href, function ( data ) {
-            $scope.itemGroups = data;
+        CrestService.makeApiCall( $scope.api.itemGroups.href, function ( data ) {
+          $scope.itemGroups = data;
         });
       }
     };
@@ -35,7 +35,7 @@ angular.module('testApp', [])
     $scope.fetchItemsForGroup = function( group ) {
       $scope.errors = [];
       if(!group.items) {
-        __makeApiCall( group.href, function ( data ) {
+        CrestService.makeApiCall( group.href, function ( data ) {
           group.items = data.types;
         });
       }
@@ -50,7 +50,7 @@ angular.module('testApp', [])
     $scope.fetchTypesForItem = function( item ) {
       $scope.errors = [];
       if(!item.types) {
-        __makeApiCall( item.href, function ( data ) {
+        CrestService.makeApiCall( item.href, function ( data ) {
           if(!data.length) {
             var dataArray = [];
             dataArray.push(data);
@@ -61,40 +61,6 @@ angular.module('testApp', [])
         });
       }
     };
-
-    /* Function to perform an API call against a given endpoint.  The
-     * data is then passed to the provided callback (if one is provided).
-     * @param url - the URL of the API endpoint to query
-     * @param callback - a function describing what to do with the data
-     * @return void - nothing
-     */
-    function __makeApiCall( url, callback ) {
-      $scope.errors = [];
-
-      $http.get( url ).success( function( data, status, headers, config ) {
-        if(typeof callback === "function") {
-          if( $scope.env === 'test') {
-            console.log( data );
-          }
-
-          if($scope.api != null) {
-            if(callback) {
-              callback(data);
-            } else {
-              if($scope.env === 'test') {
-                console.log('*** Making API call without callback to:' + url);
-              }
-            }
-          } else {
-            $scope.errors.push("Could not reach EVE CREST API.");
-          }
-        } else {
-          throw "*** ERROR: __makeApiCall() was invoked without a proper callback.";
-        }
-      }).error( function( data, status, headers, config ) {
-        $scope.errors.push( data );
-      });
-    }
 
 /* *** Directives ***
  *
