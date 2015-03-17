@@ -62,6 +62,18 @@ angular.module('testApp', ['crestService'])
       }
     };
 
+    $scope.fetchAllMarketPrices = function() {
+      $scope.errors = [];
+      if(!marketPrices) {
+        CrestService.makeApiCall( $scope.api.marketPrices.href, function( data ) {
+          $scope.marketPrices = data;
+          // for(i in data.items) {
+          //
+          // }
+        });
+      }
+    };
+
 /* *** Directives ***
  *
  */

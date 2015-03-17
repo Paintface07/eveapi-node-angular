@@ -95,8 +95,27 @@
           <a onclick="" href="{{ api.battleTheatres.href }}">{{ api.battleTheatres.href }}</a>
         </div> -->
         <div>
-          Market Prices:
-          <a onclick="" href="{{ api.marketPrices.href }}">{{ api.marketPrices.href }}</a>
+          <collapsible>
+            Market Prices:
+            <a ng-click="fetchAllMarketPrices()" class="collapsible-header" href="">{{ api.marketPrices.href }}</a>
+            <!--<div class="collapsible-content" ng-show="marketPrices" ng-repeat="(key, price) in marketPrices.items">
+              <div class="row" style="margin-top: 10px;">
+                {{ price }}
+              </div>-->
+              <table class="table" ng-show="marketPrices">
+                <tr>
+                  <td>Name</td>
+                  <td>Adjusted Price</td>
+                  <td>Average Price</td>
+                </tr>
+                <tr ng-repeat="(key, item) in marketPrices.items">
+                  <td>{{ item.type.name }}</td>
+                  <td>{{ item.adjustedPrice }}</td>
+                  <td>{{ item.averagePrice }}</td>
+                </tr>
+              </table>
+            <!--</div>-->
+          </collapsible>
         </div>
         <div>
           Item Categories:
